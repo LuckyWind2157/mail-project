@@ -1,0 +1,15 @@
+#menuLeft{
+    margin-top: 10px;
+    float: left;
+    width: 20%
+}
+#menuForm .layui-input-inline{
+    width: 60%;
+}
+#menuContent{
+    padding:20px;
+    margin-top: 10px;
+    margin-right:5%;border: 1px solid rgb(51,171,60);
+    float: right;
+    width: 70%;
+}

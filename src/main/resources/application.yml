@@ -1,0 +1,24 @@
+server:
+  port: 33402
+spring:
+  # 模板引擎
+  thymeleaf:
+    mode: HTML
+    encoding: utf-8
+    # 禁用缓存
+    cache: false
+  freemarker:
+    suffix: .html
+    cache: false
+  application:
+    name: mail-project
+  profiles:
+    active: dev
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.vcredit.vcs.mail.domain

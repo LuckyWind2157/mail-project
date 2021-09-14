@@ -1,0 +1,61 @@
+<div class="layui-layout layui-layout-admin">
+
+    <div class="layui-body" style="margin: 1%">
+        <button class="layui-btn" onclick="add()">新增</button>
+        <table id = "roleTable" lay-filter="roleTable"></table>
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="permission">权限配置</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+
+    <div id="setRole" class="layer_self_wrap" style="padding:20px;display:none;">
+        <form id="roleForm" class="layui-form layui-form-pane" method="post" action="" >
+            <input id="id" type="hidden" name="id"/>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input id="remake" name="remake" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 10px;text-align: center">
+                    <button class="layui-btn"  lay-submit="" lay-filter="roleSubmit">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="setPermission" class="layer_self_wrap" style="padding:20px;display:none;">
+        <form id="permissionForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <input id="roleId" type="hidden" name="roleId"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input id="roleName" name="roleName"  autocomplete="off" class="layui-input" type="text" readonly disabled/>
+                </div>
+            </div>
+            <div id="permissionTree" class="demo-tree-more"></div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="text-align:center;margin-left: 10px;">
+                    <button class="layui-btn"  lay-submit="" lay-filter="permissionSubmit">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script src="/common/js/role/roleIndex.js"></script>
+
+
