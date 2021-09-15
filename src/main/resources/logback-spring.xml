@@ -3,7 +3,7 @@
     <contextName>logback</contextName>
 
     <!-- 项目名称 -->
-    <property name="project_name" value="study"/>
+    <property name="project_name" value="mail-project"/>
 
     <!-- 日志存放路径 -->
     <property name="log.path" value="/usr/log/${project_name}"/>

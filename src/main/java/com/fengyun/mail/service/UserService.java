@@ -1,6 +1,6 @@
 package com.fengyun.mail.service;
 
-import com.fengyun.mail.domain.UserDao;
+import com.fengyun.mail.entity.UserDao;
 
 import java.util.List;
 

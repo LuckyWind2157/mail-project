@@ -1,6 +1,6 @@
 package com.fengyun.mail.repository;
 
-import com.fengyun.mail.domain.UserDao;
+import com.fengyun.mail.entity.UserDao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

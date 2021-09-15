@@ -1,4 +1,4 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 import lombok.Data;
 
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Table(name = "t_user")
 @Entity
 @Data
-public class UserDao extends BaseDao implements Serializable {
+public class UserDao extends BaseDo implements Serializable {
     private static final long serialVersionUID = -88598328571083439L;
     /**
      * id
@@ -46,7 +47,6 @@ public class UserDao extends BaseDao implements Serializable {
      * 年龄
      */
     private Integer age;
-    private String status;
 
     @ManyToMany
     @JoinTable(name = "t_user_role", joinColumns = {
@@ -56,5 +56,5 @@ public class UserDao extends BaseDao implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "protocol_id")
-    private MailProtocolDao mailProtocolDao;
+    private MailProtocolDo mailProtocolDo;
 }

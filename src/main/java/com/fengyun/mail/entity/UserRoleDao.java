@@ -1,4 +1,4 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "t_user_role")
 @Data
-public class UserRoleDao extends BaseDao implements Serializable {
+public class UserRoleDao extends BaseDo implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
@@ -29,5 +29,4 @@ public class UserRoleDao extends BaseDao implements Serializable {
     @JsonManagedReference
     private RoleDao roleDao;
 
-    private String status;
 }

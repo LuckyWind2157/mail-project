@@ -1,4 +1,4 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.Set;
 @Table(name = "t_role")
 @Entity
 @Data
-public class RoleDao extends BaseDao implements Serializable {
+public class RoleDao extends BaseDo implements Serializable {
     private static final long serialVersionUID = 668763132481364075L;
     /**
      * 主键id
@@ -32,11 +33,10 @@ public class RoleDao extends BaseDao implements Serializable {
      * 备注
      */
     private String remake;
-    private String status;
 
     @ManyToMany
     @JoinTable(name = "t_role_menu", joinColumns = {
             @JoinColumn(name = "role_id", referencedColumnName = "ID")}, inverseJoinColumns = {
             @JoinColumn(name = "menu_id", referencedColumnName = "ID")})
-    private Set<MenuDao> menuDaoSet;
+    private Set<MenuDo> menuDoSet;
 }

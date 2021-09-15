@@ -1,6 +1,6 @@
 package com.fengyun.mail.service.impl;
 
-import com.fengyun.mail.domain.UserDao;
+import com.fengyun.mail.entity.UserDao;
 import com.fengyun.mail.repository.UserRepository;
 import com.fengyun.mail.service.UserService;
 import com.fengyun.mail.enums.StatusEnum;

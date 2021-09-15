@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/mail_project?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
     properties:
@@ -12,7 +12,7 @@ spring:
         auto: update
         enable_lazy_load_no_trans: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   redis:
     host: 127.0.0.1
     port: 6379

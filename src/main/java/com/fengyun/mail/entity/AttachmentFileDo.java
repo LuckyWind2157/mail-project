@@ -1,4 +1,4 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
@@ -10,13 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "t_attachment_file")
 @Data
-public class AttachmentFileDao extends BaseDao implements Serializable {
+public class AttachmentFileDo extends BaseDo implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
@@ -24,7 +25,7 @@ public class AttachmentFileDao extends BaseDao implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
     @JoinColumn(name = "receiver_id")
-    private ReceiverDao receiverDao;
+    private ReceiverDo receiverDo;
 
     private byte[] file;
 }

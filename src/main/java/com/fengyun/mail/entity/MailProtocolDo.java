@@ -1,19 +1,23 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Set;
 
 @Table(name = "t_mail_protocol")
 @Entity
 @Data
-public class MailProtocolDao extends BaseDao implements Serializable {
+public class MailProtocolDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = 5282967255237973786L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,7 +30,10 @@ public class MailProtocolDao extends BaseDao implements Serializable {
     private String password;
     private String senderHost;
     private String senderPort;
-    private String status;
+
+    @OneToMany(mappedBy = "mailProtocolDo")
+    @JsonBackReference
+    private Set<ReceiverDo> receiverDos;
 
 
 }

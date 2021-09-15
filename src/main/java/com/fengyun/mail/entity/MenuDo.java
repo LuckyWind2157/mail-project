@@ -1,4 +1,4 @@
-package com.fengyun.mail.domain;
+package com.fengyun.mail.entity;
 
 import lombok.Data;
 
@@ -6,13 +6,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import java.io.Serializable;
 
 @Table(name = "t_menu")
 @Entity
 @Data
-public class MenuDao extends BaseDao implements Serializable {
+public class MenuDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = 214241636221186516L;
     /**
      * 主键
@@ -40,7 +41,6 @@ public class MenuDao extends BaseDao implements Serializable {
      * 路径
      */
     private String url;
-    private String status;
 
 
 }
