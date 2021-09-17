@@ -13,7 +13,7 @@ import java.util.Date;
 public class BaseDo {
     private Long createdId;
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private Date createdTime;
     private Long updatedId;
     @LastModifiedDate

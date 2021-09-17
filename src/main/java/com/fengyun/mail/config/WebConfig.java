@@ -37,13 +37,11 @@ public class WebConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
         // 是否允许请求带有验证信息
         config.setAllowCredentials(true);
-
         // 允许访问的客户端域名
         // (springboot2.4以上的加入这一段可解决 allowedOrigins cannot contain the special value "*"问题)
         List<String> allowedOriginPatterns = new ArrayList<>();
         allowedOriginPatterns.add("*");
         config.setAllowedOriginPatterns(allowedOriginPatterns);
-
         // 设置访问源地址
         // config.addAllowedOrigin("*");
         // 设置访问源请求头

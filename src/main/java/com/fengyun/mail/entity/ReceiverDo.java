@@ -3,9 +3,11 @@ package com.fengyun.mail.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +21,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "t_receiver")
 @Data
 public class ReceiverDo extends BaseDo implements Serializable {
@@ -41,6 +44,8 @@ public class ReceiverDo extends BaseDo implements Serializable {
     //邮件正文
     @Column(name = "content", columnDefinition = "longtext")
     private String content;
+    // 邮件编号
+    private Integer messageNumber;
     //是否需要回执
     private String isReplySign;
 

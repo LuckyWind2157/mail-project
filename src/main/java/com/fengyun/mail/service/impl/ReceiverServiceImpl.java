@@ -1,11 +1,14 @@
 package com.fengyun.mail.service.impl;
 
+import com.fengyun.mail.entity.AttachmentFileDo;
 import com.fengyun.mail.entity.MailProtocolDo;
 import com.fengyun.mail.entity.ReceiverDo;
 import com.fengyun.mail.enums.StatusEnum;
+import com.fengyun.mail.repository.AttachmentFileRepository;
 import com.fengyun.mail.repository.ReceiverRepository;
 import com.fengyun.mail.service.MailProtocolService;
 import com.fengyun.mail.service.ReceiverService;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,8 +40,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 
 @Service
 public class ReceiverServiceImpl implements ReceiverService {
@@ -47,16 +50,17 @@ public class ReceiverServiceImpl implements ReceiverService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ReceiverRepository receiverRepository;
     private final MailProtocolService mailProtocolService;
+    private final AttachmentFileRepository attachmentFileRepository;
     private final RedisTemplate redisTemplate;
 
-    public ReceiverServiceImpl(ReceiverRepository receiverRepository, MailProtocolService mailProtocolService, RedisTemplate redisTemplate) {
+    public ReceiverServiceImpl(ReceiverRepository receiverRepository, MailProtocolService mailProtocolService, AttachmentFileRepository attachmentFileRepository, RedisTemplate redisTemplate) {
         this.receiverRepository = receiverRepository;
         this.mailProtocolService = mailProtocolService;
+        this.attachmentFileRepository = attachmentFileRepository;
         this.redisTemplate = redisTemplate;
     }
 
-    @Override
-    public void receiverMail(MailProtocolDo mailProtocolDo) {
+    private void receiverMail(MailProtocolDo mailProtocolDo) {
         if (!redisTemplate.opsForValue().setIfAbsent(mailProtocolDo.getId(), "doing", Duration.ofHours(2))) return;
         if ("imap".equalsIgnoreCase(mailProtocolDo.getReceiverProtocol())) {
             try {
@@ -105,9 +109,7 @@ public class ReceiverServiceImpl implements ReceiverService {
      */
     public void parseMessage(MailProtocolDo mailProtocolDo, List<Message> messages) {
         // 解析所有邮件
-        Long maxId = receiverRepository.getMaxIdByStatus(StatusEnum.EFFECTIVE.getCode());
-        maxId = Objects.isNull(maxId) ? 0 : maxId;
-        messages.parallelStream().skip(maxId).forEach(v -> {
+        messages.parallelStream().filter(v -> !receiverRepository.existsByMessageNumber(v.getMessageNumber())).forEach(v -> {
             try {
                 MimeMessage msg = (MimeMessage) v;
                 int messageNumber = msg.getMessageNumber();
@@ -121,7 +123,7 @@ public class ReceiverServiceImpl implements ReceiverService {
                 boolean isContainerAttachment = isContainAttachment(msg);
                 StringBuffer content = new StringBuffer(30);
                 getMailTextContent(msg, content);
-                logger.info("------------------解析第" + messageNumber + "封邮件-------------------- ");
+                logger.info("------------------解析第{}封邮件开始-------------------- ",messageNumber);
                 logger.info("主题: {}", subject);
                 logger.info("发件人:{} ", sendFrom);
                 logger.info("收件人：{}", receiveAddress);
@@ -131,14 +133,10 @@ public class ReceiverServiceImpl implements ReceiverService {
                 logger.info("是否需要回执：{}", isReplySign);
                 logger.info("邮件大小：{}{}", msg.getSize() * 1024, "kb");
                 logger.info("是否包含附件：{}", isContainerAttachment);
-                logger.info("邮件正文：{}", content);
-                logger.info("------------------解析邮件结束-------------------- ");
-//                if (isSeen(msg)) {
-//                    logger.info("------------------邮件已读跳过-------------------- ");
-//                    return;
-//                }
+                // logger.info("邮件正文：{}", content);
+                logger.info("------------------解析第{}封邮件结束-------------------- ",messageNumber);
                 ReceiverDo receiverDo = new ReceiverDo();
-                receiverDo.setId((long) messageNumber);
+                receiverDo.setMessageNumber(messageNumber);
                 receiverDo.setSubject(subject);
                 receiverDo.setSendFrom(sendFrom);
                 receiverDo.setReceiveAddress(receiveAddress);
@@ -146,16 +144,58 @@ public class ReceiverServiceImpl implements ReceiverService {
                 receiverDo.setIsSeen(isSeen ? StatusEnum.EFFECTIVE.getCode() : StatusEnum.NOT_EFFECTIVE.getCode());
                 receiverDo.setPriority(priority);
                 receiverDo.setIsReplySign(isReplySign ? StatusEnum.EFFECTIVE.getCode() : StatusEnum.NOT_EFFECTIVE.getCode());
-//                    if (isContainerAttachment) {
-//                        saveAttachment(msg, "D:\\mailtmp\\" + msg.getSubject() + "_"); //保存附件
-//                    }
+                Set<AttachmentFileDo> attachmentFileDos = Sets.newHashSet();
+                if (isContainerAttachment) {
+                    attachmentFileDos = getAttachment(msg);
+                }
+                receiverDo.setAttachmentFileSet(attachmentFileDos);
                 receiverDo.setContent(content.toString());
                 receiverDo.setMailProtocolDo(mailProtocolDo);
+                attachmentFileRepository.saveAll(attachmentFileDos);
                 receiverRepository.save(receiverDo);
             } catch (Exception e) {
-                logger.error("邮件解析失败");
+                logger.error("邮件解析失败",e);
             }
         });
+    }
+
+    private Set<AttachmentFileDo> getAttachment(Part part) {
+        Set<AttachmentFileDo> set = Sets.newHashSet();
+        try {
+            if (part.isMimeType("multipart/*")) {
+                //复杂体邮件
+                Multipart multipart = (Multipart) part.getContent();
+                //复杂体邮件包含多个邮件体
+                int partCount = multipart.getCount();
+                for (int i = 0; i < partCount; i++) {
+                    //获得复杂体邮件中其中一个邮件体
+                    BodyPart bodyPart = multipart.getBodyPart(i);
+                    //某一个邮件体也有可能是由多个邮件体组成的复杂体
+                    String disp = bodyPart.getDisposition();
+                    if (disp != null && (disp.equalsIgnoreCase(Part.ATTACHMENT) || disp.equalsIgnoreCase(Part.INLINE))) {
+                        AttachmentFileDo attachmentFileDo = new AttachmentFileDo();
+                        attachmentFileDo.setFileName(decodeText(bodyPart.getFileName()));
+                        attachmentFileDo.setFile(bodyPart.getInputStream().readAllBytes());
+                        set.add(attachmentFileDo);
+                    } else if (bodyPart.isMimeType("multipart/*")) {
+                        set.addAll(getAttachment(bodyPart));
+                    } else {
+                        String contentType = bodyPart.getContentType();
+                        if (contentType.indexOf("name") != -1 || contentType.indexOf("application") != -1) {
+                            AttachmentFileDo attachmentFileDo = new AttachmentFileDo();
+                            attachmentFileDo.setFileName(decodeText(bodyPart.getFileName()));
+                            attachmentFileDo.setFile(bodyPart.getInputStream().readAllBytes());
+                            set.add(attachmentFileDo);
+                        }
+                    }
+                }
+            } else if (part.isMimeType("message/rfc822")) {
+                set.addAll(getAttachment(part));
+            }
+        } catch (Exception e) {
+            logger.error("邮件附件解析失败",e);
+        }
+        return set;
     }
 
 

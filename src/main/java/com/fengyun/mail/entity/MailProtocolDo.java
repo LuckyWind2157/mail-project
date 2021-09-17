@@ -31,9 +31,9 @@ public class MailProtocolDo extends BaseDo implements Serializable {
     private String senderHost;
     private String senderPort;
 
-    @OneToMany(mappedBy = "mailProtocolDo")
-    @JsonBackReference
-    private Set<ReceiverDo> receiverDos;
+//    @OneToMany(mappedBy = "mailProtocolDo")
+//    @JsonBackReference
+//    private Set<ReceiverDo> receiverDos;
 
 
 }

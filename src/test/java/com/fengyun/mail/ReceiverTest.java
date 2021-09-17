@@ -1,14 +1,10 @@
 package com.fengyun.mail;
 
-import com.fengyun.mail.entity.MailProtocolDo;
-import com.fengyun.mail.enums.StatusEnum;
 import com.fengyun.mail.service.MailProtocolService;
 import com.fengyun.mail.service.ReceiverService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 public class ReceiverTest {
@@ -18,16 +14,11 @@ public class ReceiverTest {
     @Autowired
     private MailProtocolService mailProtocolService;
 
+    /**
+     * 测试邮件服务的收件功能
+     */
     @Test
     public void test() {
-        List<MailProtocolDo> list = mailProtocolService.findAllByStatus(StatusEnum.EFFECTIVE.getCode());
-        list.forEach(v -> {
-            try {
-                receiverService.receiverMail(v);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        ;
+        receiverService.receiverMail();
     }
 }
