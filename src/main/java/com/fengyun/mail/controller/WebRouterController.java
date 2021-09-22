@@ -15,12 +15,12 @@ public class WebRouterController {
 
     @RequestMapping("/role")
     public String getRole() {
-        return "role/roleIndex";
+        return "role/index";
     }
 
     @RequestMapping("/menu")
     public String getMenu() {
-        return "menu/menuIndex";
+        return "menu/index";
     }
 
 
