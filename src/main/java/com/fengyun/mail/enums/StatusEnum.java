@@ -10,5 +10,4 @@ public enum StatusEnum {
     NOT_EFFECTIVE("N", "无效数据");
     private String code;
     private String des;
-
 }

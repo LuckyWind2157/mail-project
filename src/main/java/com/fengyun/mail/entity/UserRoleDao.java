@@ -22,11 +22,11 @@ public class UserRoleDao extends BaseDo implements Serializable {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserDao userDao;
+    private UserDo userDo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     @JsonManagedReference
-    private RoleDao roleDao;
+    private RoleDo roleDo;
 
 }

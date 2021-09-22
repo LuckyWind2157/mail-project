@@ -3,10 +3,12 @@ package com.fengyun.mail.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.fengyun.mail.convert.MenuConverter;
 import com.fengyun.mail.dto.MenuDTO;
+import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.entity.MenuDo;
 import com.fengyun.mail.enums.StatusEnum;
 import com.fengyun.mail.repository.MenuRepository;
 import com.fengyun.mail.service.MenuService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -31,12 +33,21 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Page<MenuDo> findByPage(Page page, MenuDTO menuDTO) {
-        return menuRepository.findAll((root, query, criteriaBuilder) -> {
+    public ResponsePageDTO<List<MenuDTO>> findByPage(Integer page, Integer size, String sort, MenuDTO menuDTO) {
+        Page<MenuDo> pageDo = menuRepository.findAll((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(root.get("status").as(String.class), StatusEnum.EFFECTIVE.getCode()));
+            if (StringUtils.isNotBlank(menuDTO.getName())) {
+                predicates.add(criteriaBuilder.equal(root.get("name").as(String.class), menuDTO.getName()));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        }, PageRequest.of(page.getPageable().getPageNumber(), page.getSize(), Sort.by("createdTime").descending()));
+        }, PageRequest.of(page-1, size, Sort.by("createdTime").descending()));
+
+        ResponsePageDTO<List<MenuDTO>> dto = new ResponsePageDTO<>();
+        dto.setCount(pageDo.getTotalElements());
+        dto.setData(MenuConverter.INSTANCE.doToMenuDTO(pageDo.getContent()));
+        return dto;
+
     }
 
     @Override
@@ -44,8 +55,8 @@ public class MenuServiceImpl implements MenuService {
         if (Objects.isNull(menuDTO.getId())) {
             logger.info("菜单新增");
             MenuDo menuDo = MenuConverter.INSTANCE.dtoToMenuDo(menuDTO);
-            menuDo.setCreatedTime(DateUtil.date());
-            menuDo.setUpdatedTime(DateUtil.date());
+           // menuDo.setCreatedTime(DateUtil.date());
+            //menuDo.setUpdatedTime(DateUtil.date());
             menuRepository.save(menuDo);
         } else {
             logger.info("菜单更新");
@@ -66,21 +77,24 @@ public class MenuServiceImpl implements MenuService {
 
     }
 
-    @Override
-    public MenuDTO findById(long id) {
-        MenuDo menuDo = menuRepository.findById(id).orElseGet(MenuDo::new);
-        return MenuConverter.INSTANCE.doToMenuDTO(menuDo);
-    }
-
-    @Override
-    public List<MenuDTO> findAllByStatus(String status) {
-        List<MenuDo> list = menuRepository.findAllByStatus(status);
-        return MenuConverter.INSTANCE.doToMenuDTO(list);
-    }
-
-    @Override
-    public List<MenuDTO> findAllByName(String name) {
-        List<MenuDo> list = menuRepository.findAllByNameAndStatus(name, StatusEnum.EFFECTIVE.getCode());
-        return MenuConverter.INSTANCE.doToMenuDTO(list);
-    }
+//    @Override
+//    public MenuDTO findById(long id) {
+//        MenuDo menuDo = menuRepository.findById(id).orElseGet(MenuDo::new);
+//        return MenuConverter.INSTANCE.doToMenuDTO(menuDo);
+//    }
+//
+//    @Override
+//    public List<MenuDTO> findAllByStatus(String status) {
+//        List<MenuDo> list = menuRepository.findAllByStatus(status);
+//        if (CollectionUtil.isEmpty(list)) {
+//            return CollectionUtil.newArrayList();
+//        }
+//        return MenuConverter.INSTANCE.doToMenuDTO(list);
+//    }
+//
+//    @Override
+//    public List<MenuDTO> findAllByName(String name) {
+//        List<MenuDo> list = menuRepository.findAllByNameAndStatus(name, StatusEnum.EFFECTIVE.getCode());
+//        return MenuConverter.INSTANCE.doToMenuDTO(list);
+//    }
 }

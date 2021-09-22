@@ -1,6 +1,6 @@
 package com.fengyun.mail.repository;
 
-import com.fengyun.mail.entity.UserDao;
+import com.fengyun.mail.entity.UserDo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserDao, Long>, JpaSpecificationExecutor<UserDao> {
+public interface UserRepository extends JpaRepository<UserDo, Long>, JpaSpecificationExecutor<UserDo> {
 
-    List<UserDao> findAllByStatus(String code);
+    List<UserDo> findAllByStatus(String code);
 }

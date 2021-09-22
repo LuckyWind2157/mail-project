@@ -2,6 +2,28 @@ let pageCurr;
 let tableIns;
 let form;
 let table;
+layui.use(["table"], function () {
+    table = layui.table;
+    form = layui.form;
+    form.render();
+    initTable(table, "/menu/findByPage");
+    //监听工具条
+    table.on('tool(menuTable)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'del') {
+            //删除
+            delMenu(data, data.id);
+        } else if (obj.event === 'edit') {
+            //编辑
+            edit(data);
+        }
+    });
+    //监听提交
+    form.on('submit(menuSubmit)', function (data) {
+        formSubmit(data);
+        return false;
+    });
+});
 
 function getMenuByName() {
     const name = $("#menuSearch").val();
@@ -27,43 +49,17 @@ function initTable(table, url, data) {
             , {field: 'updateUser', title: '修改人', sort: true}
             , {fixed: 'right', title: '操作', align: 'center', width: 200, toolbar: '#barDemo'}
         ]],
-        // done: function (res, curr, count) {
-        //     pageCurr = curr;
-        // }
-
-    });
-}
-
-layui.use(["table"], function () {
-    table = layui.table;
-    form = layui.form;
-    form.render();
-    initTable(table, "/menu/findByPage");
-    //监听工具条
-    table.on('tool(menuTable)', function (obj) {
-        var data = obj.data;
-        if (obj.event === 'del') {
-            //删除
-            delMenu(data, data.id);
-        } else if (obj.event === 'edit') {
-            //编辑
-            edit(data);
+        done: function (res, curr, count) {
+            pageCurr = curr;
         }
     });
-    //监听提交
-    form.on('submit(menuSubmit)', function (data) {
-        formSubmit(data);
-        return false;
-    });
-});
+}
 
 
 //提交表单
 function formSubmit(obj) {
     debugger
-    var type;
-    if ($("#id").val() == "") type = "post"; else type = "put";
-    AsyncAjax(type, "/tbMenu/setMenu", $("#menuForm").serialize(), function (data) {
+    AsyncAjax("post", "/menu/saveOrUpdate", $("#menuForm").serialize(), function (data) {
         if (data.code == 0) {
             layer.alert(data.message, function () {
                 layer.closeAll();
@@ -95,7 +91,6 @@ function edit(data, title) {
         $("#remake").val(data.remake);
         $("#url").val(data.url);
         $("#parentNumber").val(data.parentNumber);
-
         form.render();
     }
     var obj = $('#setMenu');

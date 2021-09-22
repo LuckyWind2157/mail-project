@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Table(name = "t_user")
 @Entity
 @Data
-public class UserDao extends BaseDo implements Serializable {
+public class UserDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = -88598328571083439L;
     /**
      * id
@@ -52,7 +51,7 @@ public class UserDao extends BaseDo implements Serializable {
     @JoinTable(name = "t_user_role", joinColumns = {
             @JoinColumn(name = "user_id", referencedColumnName = "ID")}, inverseJoinColumns = {
             @JoinColumn(name = "role_id", referencedColumnName = "ID")})
-    private Set<RoleDao> roleDaoSet;
+    private Set<RoleDo> roleDoSet;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "protocol_id")

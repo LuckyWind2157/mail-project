@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "t_role")
 @Entity
 @Data
-public class RoleDao extends BaseDo implements Serializable {
+public class RoleDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = 668763132481364075L;
     /**
      * 主键id

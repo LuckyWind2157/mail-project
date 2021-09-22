@@ -6,32 +6,38 @@
         </div>
         <button class="layui-btn" onclick="getMenuByName()">搜索</button>
         <button class="layui-btn layui-btn-normal" onclick="add()">新增</button>
-        <table id = "menuTable" lay-filter="menuTable"></table>
+        <!--        <table id="table" lay-filter="menuTable"></table>-->
+        <table class="layui-hide" id="menuTable" lay-filter="menuTable" ></table>
+
         <script type="text/html" id="barDemo">
             <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
         </script>
     </div>
-
+    <!--添加菜单-->
     <div id="setMenu" class="layer_self_wrap" style="padding:20px;display:none;">
-        <form id="menuForm" class="layui-form layui-form-pane" method="post" action="" >
+        <form id="menuForm" class="layui-form layui-form-pane" method="post" action="">
             <input id="id" type="hidden" name="id"/>
 
             <div class="layui-form-item">
                 <label class="layui-form-label">编号</label>
                 <div class="layui-input-inline">
-                    <input id="number" name="number" lay-verify="required" autocomplete="off" class="layui-input" type="number"/>
+                    <input id="number" name="number" lay-verify="required" autocomplete="off" class="layui-input"
+                           type="number"/>
                 </div>
-            </div><div class="layui-form-item">
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">上级编号</label>
                 <div class="layui-input-inline">
-                    <input id="parentNumber" name="parentNumber" lay-verify="required" autocomplete="off" class="layui-input" type="number"/>
+                    <input id="parentNumber" name="parentNumber" lay-verify="required" autocomplete="off"
+                           class="layui-input" type="number"/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">菜单名称</label>
                 <div class="layui-input-inline">
-                    <input id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                    <input id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input"
+                           type="text"/>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -49,7 +55,7 @@
 
             <div class="layui-form-item">
                 <div class="layui-input-block" style="margin-left: 10px;text-align: center">
-                    <button class="layui-btn"  lay-submit="" lay-filter="menuSubmit">提交</button>
+                    <button class="layui-btn" lay-submit="" lay-filter="menuSubmit">提交</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
             </div>
@@ -58,6 +64,104 @@
 
 
 </div>
-<script src="/common/js/menu/menu.js"></script>
-<script src="./layui/layui.js"></script>
+<script src="/views/menu/index.js"></script>
+<!--
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+        //监听工具条
+        table.on('tool(menuTable)', function (obj) {
+            let data = obj.data;
+            console.log(obj);
+            if (obj.event === 'del') {
+                delMenu(data, data.id);
+            } else if (obj.event === 'edit') {
+                edit(data);
+            }
+        });
+        var form = layui.form;
+        form.render();
+        //监听提交
+        form.on('submit(menuSubmit)', function (data) {
+            formSubmit(data);
+            return false;
+        });
+        //第一个实例
+        table.render({
+            elem: '#table'
+            , height: 312
+            , url: '/menu/findByPage' //数据接口
+            , where: {"name": "aaa"}
+            , cols: [[ //表头
+                {field: 'id', title: 'ID', sort: true}
+                , {field: 'number', title: '编号',}
+                , {field: 'parentNumber', title: '上级编号',}
+                , {field: 'name', title: '菜单名称',}
+                , {field: 'remake', title: '备注信息', sort: true}
+                , {field: 'url', title: 'url', sort: true}
+                , {field: 'createTime', title: '创建时间', sort: true}
+                , {field: 'updateTime', title: '修改时间', sort: true}
+                , {field: 'updateUser', title: '修改人', sort: true}
+                , {fixed: 'right', title: '操作', align: 'center', width: 200, toolbar: '#barDemo'}
+            ]]
+            , page: true //开启分页
+        });
+    });
+
+    //新增
+    function add() {
+        cleanMenu();
+        edit(null, "新增");
+    }
+
+    //打开编辑框
+    function edit(data, title) {
+        if (data == null) {
+            $("#id").val("");
+        } else {
+            //回显数据
+            $("#id").val(data.id);
+            $("#name").val(data.name);
+            $("#number").val(data.number);
+            $("#remake").val(data.remake);
+            $("#url").val(data.url);
+            $("#parentNumber").val(data.parentNumber);
+            form.render();
+        }
+        var obj = $('#setMenu');
+        openForm(title, true, false, true, ['600px', '450px'], obj);
+    }
+
+    //置空
+    function cleanMenu() {
+        $("#id").val("");
+        $("#name").val("");
+        $("#number").val("");
+        $("#remake").val("");
+        $("#url").val("");
+        $("#parentNumber").val("");
+    }
+
+    //删除
+    function delMenu(obj, id) { //delete待优化
+        if (null != id) {
+            layer.confirm('您确定要删除吗？', {
+                btn: ['确认', '返回'] //按钮
+            }, function () {
+                AsyncDelete("/menu/delete", {"id": id}, function (req) {
+                    layer.alert(req.message, function () {
+                        layer.closeAll();
+                        load(obj);
+                    });
+                });
+
+            }, function () {
+                layer.closeAll();
+            });
+        }
+    }
+
+
+</script>
+-->
 

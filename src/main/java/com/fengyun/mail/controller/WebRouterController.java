@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/html")
-public class HtmlController {
+public class WebRouterController {
 
     @RequestMapping("/user")
     public String getUser() {
