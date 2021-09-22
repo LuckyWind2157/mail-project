@@ -6,6 +6,7 @@ import com.fengyun.mail.enums.StatusEnum;
 import com.fengyun.mail.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +38,11 @@ public class MenuController {
         return ResponsePageDTO.ok();
     }
 
-    @PostMapping("/del")
+    @DeleteMapping("/del")
     public ResponsePageDTO<Void> delete(Long id) {
         logger.info("del");
         MenuDTO menuDTO = new MenuDTO();
+        menuDTO.setId(id);
         menuDTO.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
         menuService.saveOrUpdate(menuDTO);
         return ResponsePageDTO.ok();

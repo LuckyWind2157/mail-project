@@ -46,7 +46,6 @@
     </div>
 
     <div class="layui-body">
-        <!-- 内容主体区域 -->
         <div id="content"/>
     </div>
 
@@ -58,65 +57,5 @@
 </div>
 <script src="layui/layui.js"></script>
 <script src="views/main.js"></script>
-<script src="common/js/utils.js"></script>
 </body>
-<script>
-    // var device = layui.device();
-    // let element;
-    // let $;
-    // console.log(device);
-    // layui.use(['element', 'jquery'], function () {
-    //     element = layui.element;
-    //     $ = layui.jquery;
-    //     //定义事件
-    //     $("a").click(function () {
-    //         var url = $(this).data("href");
-    //         $("#content").load(url);
-    //     })
-    // });
-
-    //
-    // AsyncPost("/tbUser/info", null, function (data) {
-    //     $(".userName").text(data.data.userName);
-    // });
-    //
-    // $(".logout").click(function () {
-    //     layer.confirm('是否退出？', {
-    //         btn: ['确定', '取消'],
-    //     }, function (index, layero) {
-    //         AsyncPost("/tbUser/logout", null, function (result) {
-    //             localStorage.token = null;
-    //             window.location.href = "/"
-    //         })
-    //     });
-    //
-    // })
-    //
-    // SyncGet("/tbMenu/getMenus", null, function (data) {
-    //     if (data.data.length == 0) {
-    //         layui.use('layer', function () {
-    //             var layer = layui.layer;
-    //             layer.alert("暂无菜单,请联系管理员开启菜单");
-    //         });
-    //     }
-    //     var $li, $menu_dl;
-    //     $.each(data.data, function (index, item) {
-    //         if (item.number.length == 5) {
-    //             /*添加layui-nav-itemed类名，默认展开*/
-    //             /*$li = $('<li class="layui-nav-item layui-nav-itemed"></li>');*/
-    //             $li = $('<li class="layui-nav-item"></li>');
-    //             var $menu_a_ = $('<a href="javascript:;">' + item.name + '</a>');
-    //             $li.append($menu_a_);
-    //             $menu_dl = $('<dl class="layui-nav-child"></dl>');
-    //             $li.append($menu_dl);
-    //             $("ul.layui-nav-tree").append($li);
-    //         } else if (item.number.length == 8) {
-    //             var $dd = $('<dd><a href="javascript:;" data-href="' + item.url + '">' + item.name + '</a></dd>');
-    //             $menu_dl.append($dd);
-    //         }
-    //     })
-    // });
-
-
-</script>
 </html>

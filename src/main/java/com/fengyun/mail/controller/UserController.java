@@ -1,13 +1,13 @@
 package com.fengyun.mail.controller;
 
 
-import com.fengyun.mail.dto.MenuDTO;
 import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.dto.UserDTO;
 import com.fengyun.mail.enums.StatusEnum;
 import com.fengyun.mail.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,10 +46,11 @@ public class UserController {
         return ResponsePageDTO.ok();
     }
 
-    @PostMapping("/del")
+    @DeleteMapping("/del")
     public ResponsePageDTO<Void> delete(Long id) {
         logger.info("del");
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(id);
         userDTO.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
         userService.saveOrUpdate(userDTO);
         return ResponsePageDTO.ok();

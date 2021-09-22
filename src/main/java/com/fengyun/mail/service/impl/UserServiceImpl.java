@@ -65,17 +65,27 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(userDTO.getId())) {
             logger.info("新增");
             UserDo userDo = UserConverter.INSTANCE.dtoToDo(userDTO);
+            userDo.setStatus(StatusEnum.EFFECTIVE.getCode());
+            userDo.setCreatedId(0L);
+            userDo.setUpdatedId(0L);
             userRepository.save(userDo);
         } else {
             logger.info("更新");
-            Optional<UserDo> OptionalUserDo = userRepository.findById(userDTO.getId());
-            if (OptionalUserDo.isPresent()) {
+            Optional<UserDo> optionalUserDo = userRepository.findById(userDTO.getId());
+            if (optionalUserDo.isEmpty()) {
                 logger.error("用户不存在");
                 return;
             }
-            UserDo userDo = OptionalUserDo.get();
-            userDTO.setId(userDo.getId());
-            userDo = UserConverter.INSTANCE.dtoToDo(userDTO);
+            UserDo userDo = optionalUserDo.get();
+            userDo.setUserName(userDTO.getUserName());
+            userDo.setPassword(userDTO.getPassword());
+            userDo.setAge(userDTO.getAge());
+            userDo.setPhone(userDTO.getPhone());
+            userDo.setSex(userDTO.getSex());
+            if (StringUtils.isNotBlank(userDTO.getStatus())) {
+                userDo.setStatus(userDTO.getStatus());
+            }
+            userDo.setUpdatedId(1L);
             userRepository.save(userDo);
         }
     }

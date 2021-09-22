@@ -57,20 +57,26 @@ public class RoleServiceImpl implements RoleService {
         if (Objects.isNull(roleDTO.getId())) {
             logger.info("新增");
             RoleDo roleDo = RoleConverter.INSTANCE.dtoToDo(roleDTO);
+            roleDo.setStatus(StatusEnum.EFFECTIVE.getCode());
+            roleDo.setCreatedId(0L);
+            roleDo.setUpdatedId(0L);
             repository.save(roleDo);
         } else {
             logger.info("更新");
             Optional<RoleDo> optionalRoleDo = repository.findById(roleDTO.getId());
-            if (optionalRoleDo.isPresent()) {
-                logger.error("用户不存在");
+            if (optionalRoleDo.isEmpty()) {
+                logger.error("角色不存在");
                 return;
             }
             RoleDo roleDo = optionalRoleDo.get();
             roleDTO.setId(roleDo.getId());
-            roleDo = RoleConverter.INSTANCE.dtoToDo(roleDTO);
+            roleDo.setName(roleDTO.getName());
+            roleDo.setRemake(roleDTO.getRemake());
+            if (StringUtils.isNotBlank(roleDTO.getStatus())) {
+                roleDo.setStatus(roleDTO.getStatus());
+            }
+            roleDo.setUpdatedId(1L);
             repository.save(roleDo);
         }
-
-
     }
 }

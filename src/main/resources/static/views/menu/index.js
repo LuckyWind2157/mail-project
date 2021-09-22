@@ -39,13 +39,13 @@ function initTable(table, url, data) {
         , where: data
         , cols: [[ //表头
             {field: 'id', title: 'ID', sort: true}
-            , {field: 'number', title: '编号',}
-            , {field: 'parentNumber', title: '上级编号',}
+            , {field: 'code', title: '编号',}
+            , {field: 'parentCode', title: '上级编号',}
             , {field: 'name', title: '菜单名称',}
             , {field: 'remake', title: '备注信息', sort: true}
-            , {field: 'url', title: 'url', sort: true}
-            , {field: 'createTime', title: '创建时间', sort: true}
-            , {field: 'updateTime', title: '修改时间', sort: true}
+            , {field: 'url', title: '路径', sort: true}
+            , {field: 'createdTime', title: '创建时间', sort: true}
+            , {field: 'updatedTime', title: '修改时间', sort: true}
             , {field: 'updateUser', title: '修改人', sort: true}
             , {fixed: 'right', title: '操作', align: 'center', width: 200, toolbar: '#barDemo'}
         ]],
@@ -87,10 +87,10 @@ function edit(data, title) {
         //回显数据
         $("#id").val(data.id);
         $("#name").val(data.name);
-        $("#number").val(data.number);
+        $("#code").val(data.code);
         $("#remake").val(data.remake);
         $("#url").val(data.url);
-        $("#parentNumber").val(data.parentNumber);
+        $("#parentCode").val(data.parentCode);
         form.render();
     }
     var obj = $('#setMenu');
@@ -101,19 +101,18 @@ function edit(data, title) {
 function cleanMenu() {
     $("#id").val("");
     $("#name").val("");
-    $("#number").val("");
+    $("#code").val("");
     $("#remake").val("");
     $("#url").val("");
-    $("#parentNumber").val("");
+    $("#parentCode").val("");
 }
 
-//删除
-function delMenu(obj, id) { //delete待优化
+function delMenu(obj, id) {
     if (null != id) {
         layer.confirm('您确定要删除吗？', {
             btn: ['确认', '返回'] //按钮
         }, function () {
-            AsyncDelete("/menu/delete", {"id": id}, function (req) {
+            AsyncDelete("/menu/del", {"id": id}, function (req) {
                 layer.alert(req.message, function () {
                     layer.closeAll();
                     load(obj);
