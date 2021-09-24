@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * @author chenfengyun
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -27,6 +30,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
 
     @GetMapping("/me")
     public ResponsePageDTO<UserDTO> getUser() {
@@ -47,12 +51,12 @@ public class UserController {
     }
 
     @DeleteMapping("/del")
-    public ResponsePageDTO<Void> delete(Long id) {
+    public ResponsePageDTO<Void> delete(List<UserDTO> userDTOS) {
         logger.info("del");
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(id);
-        userDTO.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
-        userService.saveOrUpdate(userDTO);
+        userDTOS.forEach(v -> {
+            v.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
+            userService.saveOrUpdate(v);
+        });
         return ResponsePageDTO.ok();
     }
 }

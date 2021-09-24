@@ -14,11 +14,3 @@ spring:
     name: mail-project
   profiles:
     active: dev
-pagehelper:
-  helperDialect: mysql
-  reasonable: true
-  supportMethodsArguments: true
-  params: count=countSql
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.vcredit.vcs.mail.domain
