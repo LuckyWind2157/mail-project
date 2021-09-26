@@ -30,4 +30,8 @@ public class HtmlController {
         return html;
     }
 
+    @RequestMapping("/404")
+    public String errorPage() {
+        return "page/404";
+    }
 }
