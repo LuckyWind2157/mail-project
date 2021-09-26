@@ -51,11 +51,13 @@ public class UserController {
     }
 
     @DeleteMapping("/del")
-    public ResponsePageDTO<Void> delete(List<UserDTO> userDTOS) {
+    public ResponsePageDTO<Void> delete(@RequestParam("ids") List<Long> ids) {
         logger.info("del");
-        userDTOS.forEach(v -> {
-            v.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
-            userService.saveOrUpdate(v);
+        ids.forEach(id -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(id);
+            userDTO.setStatus(StatusEnum.NOT_EFFECTIVE.getCode());
+            userService.saveOrUpdate(userDTO);
         });
         return ResponsePageDTO.ok();
     }

@@ -30,6 +30,7 @@ public class UserDTO implements Serializable {
      * 年龄
      */
     private Integer age;
+    private String remark;
     private String status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdTime;

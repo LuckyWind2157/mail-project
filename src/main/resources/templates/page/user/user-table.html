@@ -21,25 +21,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">用户姓名</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="username" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户性别</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sex" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户城市</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="city" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户职业</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="classify" autocomplete="off" class="layui-input">
+                                <input type="text" name="userName" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -74,7 +56,6 @@
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table;
-
         table.render({
             elem: '#currentTableId',
             url: '/user/findByPage',
@@ -87,18 +68,14 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'id', width: 80, title: 'ID', sort: true},
-                {field: 'username', width: 80, title: '用户名'},
+                {field: 'userName', width: 80, title: '用户名'},
                 {field: 'sex', width: 80, title: '性别', sort: true},
                 {field: 'age', width: 80, title: '年龄', sort: true},
-                {field: 'createdTime', width: 150, title: '创建时间', sort: true},
-                {field: 'updatedTime', width: 150, title: '修改时间', sort: true},
-                {field: 'updateUser', title: '修改人', sort: true},
-                // {field: 'city', width: 80, title: '城市'},
-                // {field: 'sign', title: '签名', minWidth: 150},
-                // {field: 'experience', width: 80, title: '积分', sort: true},
-                // {field: 'score', width: 80, title: '评分', sort: true},
-                // {field: 'classify', width: 80, title: '职业'},
-                // {field: 'wealth', width: 135, title: '财富', sort: true},
+                {field: 'phone', width: 80, title: '手机号', sort: true},
+                {field: 'remark', width: 500, title: '备注', sort: true},
+                {field: 'createdTime', width: 200, title: '创建时间', sort: true},
+                {field: 'updatedTime', width: 200, title: '修改时间', sort: true},
+                {field: 'updateUser', width: 80, title: '修改人', sort: true},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
@@ -109,18 +86,13 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            var result = JSON.stringify(data.field);
-            layer.alert(result, {
-                title: '最终的搜索信息'
-            });
-
-            //执行搜索重载
+            // 执行搜索重载
             table.reload('currentTableId', {
                 page: {
-                    curr: 1
+                    page: 1
                 }
                 , where: {
-                    searchParams: result
+                    userName: data.field.userName
                 }
             }, 'data');
 
@@ -147,29 +119,31 @@
             } else if (obj.event === 'delete') {  // 监听删除操作
                 var checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-                // var del = [];
-                // data.forEach(function (elem, index) {
-                //     debugger
-                //     layer.alert(JSON.stringify(elem));
-                //     var delId = {"id": elem.id};
-                //     del.push(delId)
-                // })
-                // layer.alert(del)
+                debugger
+                var arr = new Array()
+                data.forEach(function (elem, index) {
+                    arr.push(elem.id);
+                })
+                var ids = arr.join();
                 $.ajax({
                     type: 'delete',
                     url: '/user/del',
                     dataType: 'json',
-                    data: data,
+                    data: {"ids": ids},
                     success: function (res) {
                         if (res.code === '0000') {
-                            layer.alert(JSON.stringify(res));
+                            layer.alert(res.msg);
+                            table.reload('currentTableId', {
+                                page: {
+                                    page: 1
+                                }
+                            }, 'data');
                         } else {
 
                         }
                     },
                     error: function (res) {
-                        alert(2);
+                        layer.alert(res.msg);
                     }
                 });
             }
@@ -181,9 +155,9 @@
         });
 
         table.on('tool(currentTableFilter)', function (obj) {
+            debugger
             var data = obj.data;
             if (obj.event === 'edit') {
-
                 var index = layer.open({
                     title: '编辑用户',
                     type: 2,
@@ -192,6 +166,18 @@
                     shadeClose: true,
                     area: ['100%', '100%'],
                     content: '/html/user/edit.html',
+                    success: function (layero, index1) {
+                        //找到它的子窗口的body
+                        var body = layer.getChildFrame('body', index1);  //巧妙的地方在这里哦
+                        //为子窗口元素赋值
+                        body.contents().find("#id").val(data.id);
+                        body.contents().find("#userName").val(data.userName);
+                        body.contents().find("#age").val(data.userName);
+                        body.contents().find("#sex").val(data.sex);
+                        body.contents().find("#phone").val(data.phone);
+                        body.contents().find("#remark").val(data.userName);
+                    }
+
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
@@ -199,7 +185,27 @@
                 return false;
             } else if (obj.event === 'delete') {
                 layer.confirm('真的删除行么', function (index) {
-                    obj.del();
+                    $.ajax({
+                        type: 'delete',
+                        url: '/user/del',
+                        dataType: 'json',
+                        data: {"ids": data.id},
+                        success: function (res) {
+                            if (res.code === '0000') {
+                                layer.alert(res.msg);
+                                table.reload('currentTableId', {
+                                    page: {
+                                        page: 1
+                                    }
+                                }, 'data');
+                            } else {
+
+                            }
+                        },
+                        error: function (res) {
+                            layer.alert(res.msg);
+                        }
+                    });
                     layer.close(index);
                 });
             }
