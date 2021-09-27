@@ -1,6 +1,7 @@
 package com.fengyun.mail.controller;
 
 
+import com.auth0.jwt.JWT;
 import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.dto.UserDTO;
 import com.fengyun.mail.enums.StatusEnum;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -33,9 +35,10 @@ public class UserController {
 
 
     @GetMapping("/me")
-    public ResponsePageDTO<UserDTO> getUser() {
-        Long id = 1L;
-        return ResponsePageDTO.ok(userService.findById(id));
+    public ResponsePageDTO<UserDTO> getUser(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JWT.decode(token).getClaim("userId").asLong();
+        return ResponsePageDTO.ok(userService.findById(userId));
     }
 
     @GetMapping("findByPage")

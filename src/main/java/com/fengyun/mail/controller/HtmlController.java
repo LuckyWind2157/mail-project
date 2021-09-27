@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/html")
 public class HtmlController {
 
+
     @RequestMapping("/user/{path}")
     public String userRouter(@PathVariable("path") String path) {
         String html = "page/user/" + path;

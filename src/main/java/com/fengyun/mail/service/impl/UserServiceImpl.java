@@ -10,6 +10,7 @@ import com.fengyun.mail.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -88,5 +89,13 @@ public class UserServiceImpl implements UserService {
             userDo.setUpdatedId(1L);
             userRepository.save(userDo);
         }
+    }
+
+    @Override
+    public UserDTO findOne(UserDTO userDTO) {
+        userDTO.setStatus(StatusEnum.EFFECTIVE.getCode());
+        Example<UserDo> example = Example.of(UserConverter.INSTANCE.dtoToDo(userDTO));
+        Optional<UserDo> userDoOptional = userRepository.findOne(example);
+        return userDoOptional.isEmpty() ? null : UserConverter.INSTANCE.doToDTO(userDoOptional.get());
     }
 }

@@ -15,17 +15,23 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+
+    private final AuthenticationInterceptor authenticationInterceptor;
+
+    public WebConfig(AuthenticationInterceptor authenticationInterceptor) {
+        this.authenticationInterceptor = authenticationInterceptor;
+    }
+
     /**
      * 添加拦截器
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //拦截路径可自行配置多个 可用 ，分隔开
-//        registry.addInterceptor(new JwtInterceptor()).addPathPatterns("/**")
-//                .excludePathPatterns(
-//                        "/common/**"
-//                        , "/layui/**"
-//                        , "**.ico");
+        registry.addInterceptor(authenticationInterceptor).addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/api/**"
+                        , "/css/**"
+                        , "/js/**", "/images/**", "/lib/**", "/login/**");
     }
 
     /**

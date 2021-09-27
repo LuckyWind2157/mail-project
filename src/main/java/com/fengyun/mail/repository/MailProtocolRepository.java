@@ -12,4 +12,6 @@ public interface MailProtocolRepository extends JpaRepository<MailProtocolDo, Lo
 
 
     List<MailProtocolDo> findAllByStatus(String status);
+
+    MailProtocolDo findByUserId(Long userId);
 }

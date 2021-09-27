@@ -74,7 +74,7 @@ public class ReceiverServiceImpl implements ReceiverService {
                 // 创建IMAP协议的Store对象
                 Store store = session.getStore("imap");
                 // 连接邮件服务器
-                store.connect(mailProtocolDo.getUserName(), mailProtocolDo.getPassword());
+                store.connect(mailProtocolDo.getUserName(), mailProtocolDo.getPassWord());
                 // 获得收件箱
                 Folder folder = store.getFolder("INBOX");
                 // 以读写模式打开收件箱

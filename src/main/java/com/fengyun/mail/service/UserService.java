@@ -11,4 +11,6 @@ public interface UserService {
     ResponsePageDTO<List<UserDTO>> findByPage(Integer page, Integer size, String sort, UserDTO userDTO);
 
     void saveOrUpdate(UserDTO userDTO);
+
+    UserDTO findOne(UserDTO userDTO);
 }

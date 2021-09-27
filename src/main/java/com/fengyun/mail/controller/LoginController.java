@@ -1,25 +1,44 @@
 package com.fengyun.mail.controller;
 
-import javax.servlet.http.HttpServletResponse;
+import cn.hutool.crypto.digest.MD5;
+import com.fengyun.mail.dto.UserDTO;
+import com.fengyun.mail.service.UserService;
+import com.fengyun.mail.service.impl.JwtServiceImpl;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
+
+/**
+ * @author chenfengyun
+ */
+@RestController
+@RequestMapping("/login")
 public class LoginController {
 
 
-    public String login(HttpServletResponse response, TbUser tbUser) {
+    private final UserService userService;
+    private final JwtServiceImpl jwtServicewtServiceImpl;
 
 
+    public LoginController(UserService userService, JwtServiceImpl jwtServicewtServiceImpl) {
+        this.userService = userService;
+        this.jwtServicewtServiceImpl = jwtServicewtServiceImpl;
+    }
+
+    @RequestMapping("")
+    public String login(HttpServletResponse response, UserDTO userDTO) {
         //明文密码MD5加密
-        tbUser.setUserPassword(StrToMd5.Md5(tbUser.getUserPassword()));
-        TbUser user = tbUserDao.login(tbUser);
-
-        if (user == null) {
-            throw new SystemException(ResultEnum.LOGIN_ERROR);
+        userDTO.setPassword(MD5.create().digestHex(userDTO.getPassword()));
+        userDTO = userService.findOne(userDTO);
+        if (Objects.isNull(userDTO)) {
+            throw new RuntimeException("用户不存在或者密码错误");
         }
         // 创建token
-        String token = JwtTokenUtil.createJWT(user.getId(), user.getUserName(), "user_role");
+        String token = jwtServicewtServiceImpl.sign(userDTO);
         // 将token放在响应头
-        response.setHeader(JwtTokenUtil.AUTH_HEADER_KEY, JwtTokenUtil.TOKEN_PREFIX + token);
-        redisService.set(token, user.getId());
+        response.setHeader("token", token);
         return token;
     }
 }

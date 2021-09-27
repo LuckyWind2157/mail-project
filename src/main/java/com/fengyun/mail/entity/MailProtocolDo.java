@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * @author chenfengyun
+ */
 @Table(name = "t_mail_protocol")
 @Entity
 @Data
@@ -23,7 +26,7 @@ public class MailProtocolDo extends BaseDo implements Serializable {
     private String receiverHost;
     private String receiverPort;
     private String userName;
-    private String password;
+    private String passWord;
     private String senderHost;
     private String senderPort;
 
