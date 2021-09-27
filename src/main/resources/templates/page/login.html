@@ -335,6 +335,7 @@
     ©版权所有 2021-2024 XXXX<span class="padding-5">|</span><a target="_blank">沪ICP备XXXX号-1</a>
 </div>
 <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="/js/ajax.js" charset="utf-8"></script>
 <script>
     layui.use(['form', 'jquery'], function () {
         var $ = layui.jquery,
@@ -378,6 +379,7 @@
                 return false;
             }
             $.ajax({
+
                 type: 'post',
                 url: '/login',
                 // dataType: 'json',
@@ -385,11 +387,12 @@
                 success: function (res) {
                     layer.msg('登录成功', function () {
                         window.location = '../index';
+                        localStorage.token = data.data;
                     });
                 },
-                error: function (res) {
-                    layer.msg('登录失败');
-                }
+                // error: function (res) {
+                //     layer.msg('登录失败');
+                // }
             });
             return false;
         });

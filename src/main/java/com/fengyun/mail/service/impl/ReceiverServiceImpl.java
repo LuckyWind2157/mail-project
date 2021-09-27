@@ -1,5 +1,8 @@
 package com.fengyun.mail.service.impl;
 
+import com.fengyun.mail.convert.ReceiverConverter;
+import com.fengyun.mail.dto.ReceiverDTO;
+import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.entity.AttachmentFileDo;
 import com.fengyun.mail.entity.MailProtocolDo;
 import com.fengyun.mail.entity.ReceiverDo;
@@ -9,8 +12,12 @@ import com.fengyun.mail.repository.ReceiverRepository;
 import com.fengyun.mail.service.MailProtocolService;
 import com.fengyun.mail.service.ReceiverService;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +35,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
+import javax.persistence.criteria.Predicate;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -37,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -93,7 +102,7 @@ public class ReceiverServiceImpl implements ReceiverService {
                 folder.close(true);
                 store.close();
             } catch (Exception e) {
-                logger.error("收取邮件异常：{}", mailProtocolDo);
+                logger.error("收取邮件异常：{}", mailProtocolDo, e);
             }
         }
 
@@ -102,6 +111,22 @@ public class ReceiverServiceImpl implements ReceiverService {
     @Override
     public void receiverMail() {
         mailProtocolService.findAllByStatus(StatusEnum.EFFECTIVE.getCode()).forEach(this::receiverMail);
+    }
+
+    @Override
+    public ResponsePageDTO<List<ReceiverDTO>> findByPage(Integer page, Integer size, ReceiverDTO receiverDTO) {
+        Page<ReceiverDo> pageDo = receiverRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.isNotBlank(receiverDTO.getSubject())) {
+                predicates.add(criteriaBuilder.equal(root.get("subject").as(String.class), receiverDTO.getSubject()));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        }, PageRequest.of(page - 1, size, Sort.by("createdTime").descending()));
+
+        ResponsePageDTO<List<ReceiverDTO>> dto = new ResponsePageDTO<>();
+        dto.setCount(pageDo.getTotalElements());
+        dto.setData(ReceiverConverter.INSTANCE.doToDTO(pageDo.getContent()));
+        return dto;
     }
 
     /**
@@ -133,7 +158,6 @@ public class ReceiverServiceImpl implements ReceiverService {
                 logger.info("是否需要回执：{}", isReplySign);
                 logger.info("邮件大小：{}{}", msg.getSize() * 1024, "kb");
                 logger.info("是否包含附件：{}", isContainerAttachment);
-                // logger.info("邮件正文：{}", content);
                 logger.info("------------------解析第{}封邮件结束-------------------- ", messageNumber);
                 ReceiverDo receiverDo = new ReceiverDo();
                 receiverDo.setMessageNumber(messageNumber);
@@ -150,7 +174,7 @@ public class ReceiverServiceImpl implements ReceiverService {
                 }
                 receiverDo.setAttachmentFileSet(attachmentFileDos);
                 receiverDo.setContent(content.toString());
-                receiverDo.setMailProtocolDo(mailProtocolDo);
+                receiverDo.setUserId(mailProtocolDo.getUserId());
                 attachmentFileRepository.saveAll(attachmentFileDos);
                 receiverRepository.save(receiverDo);
             } catch (Exception e) {

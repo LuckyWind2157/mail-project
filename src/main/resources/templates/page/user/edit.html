@@ -76,9 +76,15 @@
             $ = layui.$;
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            $.post("/user/saveOrUpdate", //请求路径
-                data.field,
-                function (res) {
+            $.ajax({
+                headers: {
+                    token: localStorage.token
+                },
+                type: 'post',
+                url: '/user/saveOrUpdate',
+                dataType: 'json',
+                data: data.field,
+                success: function (res) {
                     if (res.code === '0000') {
                         var iframeIndex = parent.layer.getFrameIndex(window.name);
                         window.parent.location.reload();
@@ -90,7 +96,10 @@
                         });
                     }
                 },
-                "json");
+                error: function (res) {
+                    layer.alert(res.msg);
+                }
+            });
             return false;
         });
 

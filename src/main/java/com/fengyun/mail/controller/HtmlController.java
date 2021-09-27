@@ -31,6 +31,12 @@ public class HtmlController {
         return html;
     }
 
+    @RequestMapping("/mail/{path}")
+    public String mailRouter(@PathVariable("path") String path) {
+        String html = "page/mail/" + path;
+        return html;
+    }
+
     @RequestMapping("/404")
     public String errorPage() {
         return "page/404";

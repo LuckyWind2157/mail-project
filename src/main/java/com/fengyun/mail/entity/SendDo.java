@@ -18,13 +18,15 @@ import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "t_receiver")
+@Table(name = "t_send")
 @Data
-public class ReceiverDo extends BaseDo implements Serializable {
+public class SendDo extends BaseDo implements Serializable {
     private static final long serialVersionUID = -4097530692144006362L;
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
+    private Long userId;
     //主题
     private String subject;
     //发件人
@@ -33,18 +35,10 @@ public class ReceiverDo extends BaseDo implements Serializable {
     private String receiveAddress;
     //发送时间
     private Date sentDate;
-    //是否已读
-    private String isSeen;
-    //邮件优先级
-    private String priority;
     //邮件正文
     @Column(name = "content", columnDefinition = "longtext")
     private String content;
-    // 邮件编号
-    private Integer messageNumber;
-    //是否需要回执
-    private String isReplySign;
-    private Long userId;
+
     @OneToMany(mappedBy = "receiverDo")
     @JsonBackReference
     private Set<AttachmentFileDo> AttachmentFileSet;

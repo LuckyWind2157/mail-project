@@ -49,13 +49,13 @@
           "child": [
             {
               "title": "收件箱",
-              "href": "page/form.html",
+              "href": "html/mail/receiver-table",
               "icon": "fa fa-list-alt",
               "target": "_self"
             },
             {
               "title": "发件箱",
-              "href": "page/form-step.html",
+              "href": "html/mail/send-table",
               "icon": "fa fa-navicon",
               "target": "_self"
             }
