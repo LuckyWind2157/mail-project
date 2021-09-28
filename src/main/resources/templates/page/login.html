@@ -379,15 +379,14 @@
                 return false;
             }
             $.ajax({
-
                 type: 'post',
                 url: '/login',
                 // dataType: 'json',
                 data: data,
                 success: function (res) {
                     layer.msg('登录成功', function () {
+                        localStorage.token = res;
                         window.location = '../index';
-                        localStorage.token = data.data;
                     });
                 },
                 // error: function (res) {

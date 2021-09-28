@@ -16,32 +16,6 @@
       "target": "_self",
       "child": [
         {
-          "title": "系统设置",
-          "href": "",
-          "icon": "fa fa-gears",
-          "target": "_self",
-          "child": [
-            {
-              "title": "用户管理",
-              "href": "html/user/user-table",
-              "icon": "fa fa-tachometer",
-              "target": "_self"
-            },
-            {
-              "title": "菜单管理",
-              "href": "html/menu/index",
-              "icon": "fa fa-window-maximize",
-              "target": "_self"
-            },
-            {
-              "title": "主页三",
-              "href": "page/welcome-3.html",
-              "icon": "fa fa-tachometer",
-              "target": "_self"
-            }
-          ]
-        },
-        {
           "title": "邮件管理",
           "href": "",
           "icon": "fa fa-calendar",

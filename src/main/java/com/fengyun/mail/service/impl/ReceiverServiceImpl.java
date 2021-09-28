@@ -1,7 +1,7 @@
 package com.fengyun.mail.service.impl;
 
 import com.fengyun.mail.convert.ReceiverConverter;
-import com.fengyun.mail.dto.ReceiverDTO;
+import com.fengyun.mail.dto.MailDTO;
 import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.entity.AttachmentFileDo;
 import com.fengyun.mail.entity.MailProtocolDo;
@@ -52,6 +52,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * @author chenfengyun
+ */
 @Service
 public class ReceiverServiceImpl implements ReceiverService {
 
@@ -77,7 +80,7 @@ public class ReceiverServiceImpl implements ReceiverService {
                 Properties props = new Properties();
                 props.setProperty("mail.store.protocol", mailProtocolDo.getReceiverProtocol());
                 props.setProperty("mail.imap.host", mailProtocolDo.getReceiverHost());
-                props.setProperty("mail.imap.port", mailProtocolDo.getReceiverPort());
+                props.setProperty("mail.imap.port", mailProtocolDo.getReceiverPort().toString());
                 // 创建Session实例对象
                 Session session = Session.getInstance(props);
                 // 创建IMAP协议的Store对象
@@ -114,16 +117,16 @@ public class ReceiverServiceImpl implements ReceiverService {
     }
 
     @Override
-    public ResponsePageDTO<List<ReceiverDTO>> findByPage(Integer page, Integer size, ReceiverDTO receiverDTO) {
+    public ResponsePageDTO<List<MailDTO>> findByPage(Integer page, Integer size, MailDTO mailDTO) {
         Page<ReceiverDo> pageDo = receiverRepository.findAll((root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (StringUtils.isNotBlank(receiverDTO.getSubject())) {
-                predicates.add(criteriaBuilder.equal(root.get("subject").as(String.class), receiverDTO.getSubject()));
+            if (StringUtils.isNotBlank(mailDTO.getSubject())) {
+                predicates.add(criteriaBuilder.equal(root.get("subject").as(String.class), mailDTO.getSubject()));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         }, PageRequest.of(page - 1, size, Sort.by("createdTime").descending()));
 
-        ResponsePageDTO<List<ReceiverDTO>> dto = new ResponsePageDTO<>();
+        ResponsePageDTO<List<MailDTO>> dto = new ResponsePageDTO<>();
         dto.setCount(pageDo.getTotalElements());
         dto.setData(ReceiverConverter.INSTANCE.doToDTO(pageDo.getContent()));
         return dto;

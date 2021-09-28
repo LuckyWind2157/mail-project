@@ -24,15 +24,11 @@ public class MailProtocolDo extends BaseDo implements Serializable {
     private Long userId;
     private String receiverProtocol;
     private String receiverHost;
-    private String receiverPort;
+    private Integer receiverPort;
     private String userName;
     private String passWord;
     private String senderHost;
-    private String senderPort;
-
-//    @OneToMany(mappedBy = "mailProtocolDo")
-//    @JsonBackReference
-//    private Set<ReceiverDo> receiverDos;
+    private Integer senderPort;
 
 
 }

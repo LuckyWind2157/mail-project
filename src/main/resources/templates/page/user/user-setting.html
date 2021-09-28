@@ -37,7 +37,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">邮箱密码</label>
                 <div class="layui-input-block">
-                    <input type="number" name="passWord" lay-verify="required" lay-reqtext="邮箱密码不能为空"
+                    <input type="text" name="passWord" lay-verify="required" lay-reqtext="邮箱密码不能为空"
                            placeholder="请输入邮箱密码" value="" class="layui-input">
                 </div>
             </div>
@@ -53,7 +53,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">地址</label>
                 <div class="layui-input-block">
-                    <input type="number" name="receiverHost" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入"
+                    <input type="text" name="receiverHost" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入"
                            value="" class="layui-input">
                 </div>
             </div>
@@ -67,7 +67,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">地址</label>
                 <div class="layui-input-block">
-                    <input type="number" name="senderHost" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入"
+                    <input type="text" name="senderHost" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入"
                            value="" class="layui-input">
                 </div>
             </div>
@@ -94,17 +94,44 @@
             layer = layui.layer,
             $ = layui.jquery,
             miniTab = layui.miniTab;
-
+        $.ajax({
+            headers: {
+                token: localStorage.token
+            },
+            type: 'get',
+            url: '/mail/findByToken',
+            dataType: 'json',
+            success: function (res) {
+                $("input[name='id']").val(res.data.id)
+                $("input[name='username']").val(res.data.userName)
+                $("input[name='passWord']").val(res.data.passWord)
+                $("input[name='receiverProtocol']").val(res.data.receiverProtocol)
+                $("input[name='receiverHost']").val(res.data.receiverHost)
+                $("input[name='receiverPort']").val(res.data.receiverPort)
+                $("input[name='senderHost']").val(res.data.senderHost)
+                $("input[name='senderPort']").val(res.data.senderPort)
+            },
+            error: function (res) {
+                layer.alert(res.msg);
+            }
+        });
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-
-
-            var index = layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            }, function () {
-                layer.close(index);
-                miniTab.deleteCurrentByIframe();
+            $.ajax({
+                headers: {
+                    token: localStorage.token
+                },
+                type: 'post',
+                url: '/mail/saveOrUpdate',
+                data: data.field,
+                dataType: 'json',
+                success: function (res) {
+                    miniTab.deleteCurrentByIframe();
+                },
+                error: function (res) {
+                    layer.alert(res.msg);
+                }
             });
             return false;
         });

@@ -6,8 +6,13 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 邮件前端数据封装
+ *
+ * @author chenfengyun
+ */
 @Data
-public class ReceiverDTO implements Serializable {
+public class MailDTO implements Serializable {
 
     private static final long serialVersionUID = -7076428364752333348L;
     private Long id;

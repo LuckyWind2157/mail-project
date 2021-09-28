@@ -1,7 +1,6 @@
 package com.fengyun.mail.controller;
 
-import com.fengyun.mail.dto.MailProtocolDTO;
-import com.fengyun.mail.dto.ReceiverDTO;
+import com.fengyun.mail.dto.MailDTO;
 import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.service.ReceiverService;
 import org.slf4j.Logger;
@@ -27,8 +26,8 @@ public class ReceiverController {
 
 
     @GetMapping("findByPage")
-    public ResponsePageDTO<List<ReceiverDTO>> getList(@RequestParam("page") Integer page, @RequestParam("limit") Integer size, ReceiverDTO receiverDTO) {
-        return receiverService.findByPage(page, size, receiverDTO);
+    public ResponsePageDTO<List<MailDTO>> getList(@RequestParam("page") Integer page, @RequestParam("limit") Integer size, MailDTO mailDTO) {
+        return receiverService.findByPage(page, size, mailDTO);
     }
 
 }
