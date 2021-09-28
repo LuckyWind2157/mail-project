@@ -80,7 +80,7 @@
                     page: 1
                 }
                 , where: {
-                    userName: data.field.userName
+                    subject: data.field.subject
                 }
             }, 'data');
 
@@ -102,6 +102,7 @@
                     body.contents().find("#sendFrom").val(data.sendFrom);
                     body.contents().find("#receiveAddress").val(data.receiveAddress);
                     body.contents().find("#content").html(data.content);
+                    body.contents().find("#subject").val(data.subject);
                 }
             });
             $(window).on("resize", function () {

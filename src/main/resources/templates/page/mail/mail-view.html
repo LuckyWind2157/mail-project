@@ -21,11 +21,6 @@
             <input type="hidden" name="id" id="id" class="layui-input">
         </div>
     </div>
-    <!--    <div class="layui-form-item">-->
-    <!--        <div class="layui-input-block">-->
-    <!--            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="back">返回</button>-->
-    <!--        </div>-->
-    <!--    </div>-->
     <div class="layui-form-item">
         <label class="layui-form-label required">发件人</label>
         <div class="layui-input-block">
@@ -36,6 +31,12 @@
         <label class="layui-form-label required">收件人</label>
         <div class="layui-input-block">
             <input type="text" id="receiveAddress" readonly="true" name="receiveAddress" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">主题</label>
+        <div class="layui-input-block">
+            <input type="text" id="subject" readonly="true" name="subject" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -49,19 +50,6 @@
 </div>
 <script src="/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
 <script>
-    // layui.use(['form'], function () {
-    //     var form = layui.form,
-    //         layer = layui.layer,
-    //         $ = layui.$;
-    //     //监听提交
-    //     form.on('submit(back)', function (data) {
-    //         var iframeIndex = parent.layer.getFrameIndex(window.name);
-    //         window.parent.location.reload();
-    //         parent.layer.close(iframeIndex);
-    //         return false;
-    //     });
-    //
-    // });
 </script>
 </body>
 </html>
