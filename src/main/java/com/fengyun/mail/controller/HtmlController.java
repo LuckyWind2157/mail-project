@@ -41,4 +41,9 @@ public class HtmlController {
     public String errorPage() {
         return "page/404";
     }
+
+    @RequestMapping("/home")
+    public String home() {
+        return "page/welcome";
+    }
 }

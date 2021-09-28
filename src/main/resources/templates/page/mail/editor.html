@@ -15,17 +15,18 @@
         <div class="layui-form layuimini-form">
 
             <blockquote class="layui-elem-quote">
-                <!--                <div class="layui-form-item">-->
-                <!--                    <label class="layui-form-label required">发件人</label>-->
-                <!--                    <div class="layui-input-block">-->
-                <!--                        <input type="text" id="sendFrom" name="sendFrom" class="layui-input">-->
-                <!--                    </div>-->
-                <!--                </div>-->
+
                 <div class="layui-form-item">
                     <label class="layui-form-label required">收件人</label>
                     <div class="layui-input-block">
                         <input type="text" id="receiveAddress" name="receiveAddress"
                                class="layui-input">
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label required">主题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="subject" name="subject" class="layui-input">
+                        </div>
                     </div>
                     <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" id="send"> 发送</button>
                 </div>
@@ -77,8 +78,8 @@
         editor.create();
         $("#send").click(function () {
             var receiveAddress = $("#receiveAddress").val();
+            var subject = $("#subject").val();
             var content = editor.txt.html()
-            layer.msg(editor.txt.html());
             $.ajax({
                 headers: {
                     token: localStorage.token
@@ -86,18 +87,18 @@
                 type: 'post',
                 url: '/mail/send',
                 dataType: 'json',
-                data: {"receiveAddress": receiveAddress, "content": content},
+                data: {"receiveAddress": receiveAddress, "content": content, "subject": subject},
                 success: function (res) {
-
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    window.parent.location.reload();
+                    parent.layer.close(iframeIndex);
                 },
                 error: function (res) {
                     layer.alert(res.msg);
                 }
             });
 
-            // var iframeIndex = parent.layer.getFrameIndex(window.name);
-            // window.parent.location.reload();
-            // parent.layer.close(iframeIndex);
+
             return false;
         });
     });

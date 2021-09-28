@@ -1,21 +1,30 @@
 package com.fengyun.mail.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.fengyun.mail.convert.ReceiverConverter;
+import com.fengyun.mail.dto.MailDTO;
+import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.entity.MailProtocolDo;
 import com.fengyun.mail.entity.SendDo;
 import com.fengyun.mail.repository.MailProtocolRepository;
 import com.fengyun.mail.repository.SendRepository;
 import com.fengyun.mail.service.MailService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -42,10 +51,6 @@ public class MailServiceImpl implements MailService {
      */
     @Override
     public void sendSimpleMail(String to, String subject, String content, Long userId) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(to);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(content);
         //发送邮件
         try {
             MailProtocolDo protocolDo = mailProtocolRepository.findByUserId(userId);
@@ -54,6 +59,11 @@ public class MailServiceImpl implements MailService {
             mailSender.setPassword(protocolDo.getPassWord());
             mailSender.setHost(protocolDo.getSenderHost());
             mailSender.setPort(protocolDo.getSenderPort());
+            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+            simpleMailMessage.setTo(to);
+            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setText(content);
+            simpleMailMessage.setFrom(protocolDo.getUserName());
             mailSender.send(simpleMailMessage);
             SendDo sendDo = new SendDo();
             sendDo.setSubject(subject);
@@ -74,24 +84,48 @@ public class MailServiceImpl implements MailService {
      * content：发送的内容
      */
     @Override
-    public void sendHtmlMail(String to, String subject, String content, Long userId) throws MessagingException {
-        MailProtocolDo protocolDo = mailProtocolRepository.findByUserId(userId);
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setUsername(protocolDo.getUserName());
-        mailSender.setPassword(protocolDo.getPassWord());
-        mailSender.setHost(protocolDo.getSenderHost());
-        mailSender.setPort(protocolDo.getSenderPort());
-        MimeMessage mimeMailMessage = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
-        mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
-        mimeMessageHelper.setText(content, true);
+    public void sendHtmlMail(String to, String subject, String content, Long userId) {
         try {
+            MailProtocolDo protocolDo = mailProtocolRepository.findByUserId(userId);
+            JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+            mailSender.setUsername(protocolDo.getUserName());
+            mailSender.setPassword(protocolDo.getPassWord());
+            mailSender.setHost(protocolDo.getSenderHost());
+            mailSender.setPort(protocolDo.getSenderPort());
+            MimeMessage mimeMailMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(content, true);
+            mimeMessageHelper.setFrom(protocolDo.getUserName());
             mailSender.send(mimeMailMessage);
+            SendDo sendDo = new SendDo();
+            sendDo.setSubject(subject);
+            sendDo.setSentDate(DateUtil.date());
+            sendDo.setReceiveAddress(to);
+            sendDo.setContent(content);
+            sendDo.setSendFrom(protocolDo.getUserName());
+            sendRepository.save(sendDo);
             logger.info("HTML邮件发送成功！");
-        } catch (MailException e) {
+        } catch (Exception e) {
             logger.error("HTML邮件发送失败！", e);
         }
+    }
+
+    @Override
+    public ResponsePageDTO<List<MailDTO>> findByPage(Integer page, Integer size, MailDTO mailDTO) {
+        Page<SendDo> pageDo = sendRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (StringUtils.isNotBlank(mailDTO.getSubject())) {
+                predicates.add(criteriaBuilder.equal(root.get("subject").as(String.class), mailDTO.getSubject()));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        }, PageRequest.of(page - 1, size, Sort.by("createdTime").descending()));
+
+        ResponsePageDTO<List<MailDTO>> dto = new ResponsePageDTO<>();
+        dto.setCount(pageDo.getTotalElements());
+        dto.setData(ReceiverConverter.INSTANCE.doToSendDTO(pageDo.getContent()));
+        return dto;
     }
 
 

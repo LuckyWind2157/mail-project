@@ -6,11 +6,14 @@ import com.fengyun.mail.dto.MailProtocolDTO;
 import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.service.MailProtocolService;
 import com.fengyun.mail.service.MailService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 邮件发送和账号设置接口
@@ -72,7 +75,13 @@ public class MailController {
     public ResponsePageDTO<Void> send(HttpServletRequest request, MailDTO dto) {
         String token = request.getHeader("token");
         Long userId = JWT.decode(token).getClaim("userId").asLong();
-        mailService.sendSimpleMail(dto.getReceiveAddress(), dto.getSubject(), dto.getContent(), userId);
+        mailService.sendHtmlMail(dto.getReceiveAddress(), dto.getSubject(), dto.getContent(), userId);
         return ResponsePageDTO.ok();
+    }
+
+
+    @GetMapping("findByPage")
+    public ResponsePageDTO<List<MailDTO>> getList(@RequestParam("page") Integer page, @RequestParam("limit") Integer size, MailDTO mailDTO) {
+        return mailService.findByPage(page, size, mailDTO);
     }
 }
