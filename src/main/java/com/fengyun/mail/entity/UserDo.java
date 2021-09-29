@@ -46,9 +46,5 @@ public class UserDo extends BaseDo implements Serializable {
     private Integer age;
 
     private String remark;
-    @ManyToMany
-    @JoinTable(name = "t_user_role", joinColumns = {
-            @JoinColumn(name = "user_id", referencedColumnName = "ID")}, inverseJoinColumns = {
-            @JoinColumn(name = "role_id", referencedColumnName = "ID")})
-    private Set<RoleDo> roleDoSet;
+
 }

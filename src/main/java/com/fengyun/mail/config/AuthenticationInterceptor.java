@@ -33,17 +33,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
         String[] uri = httpServletRequest.getRequestURL().toString().split("/");
-//        String redirectURL = uri[0] + "//" + uri[2] + "/";
+        String redirectURL = uri[0] + "//" + uri[2] + "/";
         // 执行认证
-//        if (token == null) {
-//            logger.info("无token，请重新登录");
-//            return false;
-//        }
-//        boolean verity = jwtService.verity(token);
-//        if (verity) {
-//            return false;
-//        }
-        return true;
+        if (token == null) {
+            logger.info("无token，请重新登录");
+            return false;
+        }
+        return jwtService.verity(token);
     }
 
     @Override

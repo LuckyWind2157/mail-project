@@ -1,7 +1,6 @@
 package com.fengyun.mail.service;
 
 import com.fengyun.mail.dto.MailProtocolDTO;
-import com.fengyun.mail.dto.ResponsePageDTO;
 import com.fengyun.mail.entity.MailProtocolDo;
 
 import java.util.List;

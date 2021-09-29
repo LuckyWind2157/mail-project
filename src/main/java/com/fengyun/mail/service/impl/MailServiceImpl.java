@@ -28,7 +28,7 @@ import java.util.List;
 
 
 /**
- * @author Administrator
+ * @author chenfengyun
  */
 @Service
 public class MailServiceImpl implements MailService {
@@ -112,6 +112,14 @@ public class MailServiceImpl implements MailService {
         }
     }
 
+    /**
+     * 发件箱查询
+     *
+     * @param page    页数
+     * @param size    每页条数
+     * @param mailDTO 查询条件
+     * @return 发送的邮件记录
+     */
     @Override
     public ResponsePageDTO<List<MailDTO>> findByPage(Integer page, Integer size, MailDTO mailDTO) {
         Page<SendDo> pageDo = sendRepository.findAll((root, query, criteriaBuilder) -> {

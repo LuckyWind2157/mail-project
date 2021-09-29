@@ -11,6 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author chenfengyun
+ */
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -31,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/api/**"
                         , "/css/**"
-                        , "/js/**", "/images/**", "/lib/**", "/html/**", "/login/**");
+                        , "/js/**", "/images/**", "/lib/**", "/html/**", "/login/**", "/index", "/");
     }
 
     /**
