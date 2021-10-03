@@ -44,10 +44,10 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
-     * 发送简单文本邮件
-     * to：发送给谁
-     * subject：发送的主题（邮件主题）
-     * content：发送的内容
+     * 邮件发送
+     * to：收件人
+     * subject：邮件主题
+     * content：邮件内容
      */
     @Override
     public void sendSimpleMail(String to, String subject, String content, Long userId) {

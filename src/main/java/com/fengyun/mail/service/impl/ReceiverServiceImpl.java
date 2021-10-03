@@ -36,13 +36,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.persistence.criteria.Predicate;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -358,11 +352,11 @@ public class ReceiverServiceImpl implements ReceiverService {
     /**
      * 获得邮件的优先级
      *
-     * @param msg 邮件内容
-     * @return 1(High):紧急  3:普通(Normal)  5:低(Low)
-     * @throws MessagingException
+     * @param msg 邮件
+     * @return 邮件登记
+     * @throws Exception
      */
-    public String getPriority(MimeMessage msg) throws MessagingException {
+    public String getPriority(MimeMessage msg) throws Exception {
         String priority = "普通";
         String[] headers = msg.getHeader("X-Priority");
         if (headers != null) {
@@ -382,11 +376,9 @@ public class ReceiverServiceImpl implements ReceiverService {
      *
      * @param part    邮件体
      * @param content 存储邮件文本内容的字符串
-     * @throws MessagingException
-     * @throws IOException
+     * @throws Exception
      */
-    public void getMailTextContent(Part part, StringBuffer content) throws MessagingException, IOException {
-        //如果是文本类型的附件，通过getContent方法可以取到文本内容，但这不是我们需要的结果，所以在这里要做判断
+    public void getMailTextContent(Part part, StringBuffer content) throws Exception {
         boolean isContainTextAttach = part.getContentType().indexOf("name") > 0;
         if (part.isMimeType("text/*") && !isContainTextAttach) {
             content.append(part.getContent().toString());
@@ -400,67 +392,6 @@ public class ReceiverServiceImpl implements ReceiverService {
                 getMailTextContent(bodyPart, content);
             }
         }
-    }
-
-    /**
-     * 保存附件
-     *
-     * @param part    邮件中多个组合体中的其中一个组合体
-     * @param destDir 附件保存目录
-     * @throws UnsupportedEncodingException
-     * @throws MessagingException
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public void saveAttachment(Part part, String destDir) throws UnsupportedEncodingException, MessagingException,
-            FileNotFoundException, IOException {
-        if (part.isMimeType("multipart/*")) {
-            Multipart multipart = (Multipart) part.getContent();    //复杂体邮件
-            //复杂体邮件包含多个邮件体
-            int partCount = multipart.getCount();
-            for (int i = 0; i < partCount; i++) {
-                //获得复杂体邮件中其中一个邮件体
-                BodyPart bodyPart = multipart.getBodyPart(i);
-                //某一个邮件体也有可能是由多个邮件体组成的复杂体
-                String disp = bodyPart.getDisposition();
-                if (disp != null && (disp.equalsIgnoreCase(Part.ATTACHMENT) || disp.equalsIgnoreCase(Part.INLINE))) {
-                    InputStream is = bodyPart.getInputStream();
-                    saveFile(is, destDir, decodeText(bodyPart.getFileName()));
-                } else if (bodyPart.isMimeType("multipart/*")) {
-                    saveAttachment(bodyPart, destDir);
-                } else {
-                    String contentType = bodyPart.getContentType();
-                    if (contentType.indexOf("name") != -1 || contentType.indexOf("application") != -1) {
-                        saveFile(bodyPart.getInputStream(), destDir, decodeText(bodyPart.getFileName()));
-                    }
-                }
-            }
-        } else if (part.isMimeType("message/rfc822")) {
-            saveAttachment((Part) part.getContent(), destDir);
-        }
-    }
-
-    /**
-     * 读取输入流中的数据保存至指定目录
-     *
-     * @param is       输入流
-     * @param fileName 文件名
-     * @param destDir  文件存储目录
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    private void saveFile(InputStream is, String destDir, String fileName)
-            throws FileNotFoundException, IOException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-        BufferedOutputStream bos = new BufferedOutputStream(
-                new FileOutputStream(new File(destDir + fileName)));
-        int len = -1;
-        while ((len = bis.read()) != -1) {
-            bos.write(len);
-            bos.flush();
-        }
-        bos.close();
-        bis.close();
     }
 
     /**
